@@ -5,13 +5,22 @@ class OrdersController < ApplicationController
   # GET /orders.json
   def index
     @orders = Order.all
+    @allOrders = @orders.customer.includes(:name)
+      @order_customer_pairs = @allOrders.map { |o| [o, o.name] }
+      
+      @order_price_total = 0
+    @orders.each do |order|
+        @order_price_total = @order_price_total + order.totalPrice
+    end
+      
   end
 
   # GET /orders/1
   # GET /orders/1.json
   def show
-    @line_items = @order.line_items
-    byebug
+    line_items = @order.line_items.includes(:pumpkin)
+    @li_pumpkin_pairs = line_items.map { |li| [li, li.pumpkin] }
+    @customer_name = @order.customer.name
   end
 
   # GET /orders/new
